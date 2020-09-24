@@ -1,7 +1,7 @@
 
 {
   "version": 2,
-	"alias": ["petgram"],
+	"alias": ["petgramTestJoss"],
   "builds": [
     {
       "src": "package.json",
