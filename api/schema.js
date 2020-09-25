@@ -48,7 +48,6 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    likeAnonymousPhoto (input: LikePhoto!): Photo
     likePhoto (input: LikePhoto!): Photo
     signup (input: UserCredentials!): String
     login (input: UserCredentials!): String
@@ -78,19 +77,6 @@ function tryGetFavsFromUserLogged (context) {
 
 const resolvers = {
   Mutation: {
-    likeAnonymousPhoto: (_, {input}) => {
-      // find the photo by id and throw an error if it doesn't exist
-      const {id: photoId} = input
-      const photo = photosModel.find({ id: photoId })
-      if (!photo) {
-        throw new Error(`Couldn't find photo with id ${photoId}`)
-      }
-      // put a like to the photo
-      photosModel.addLike({ id: photoId })
-      // get the updated photos model
-      const actualPhoto = photosModel.find({ id: photoId })
-      return actualPhoto
-    },
     likePhoto: (_, { input }, context) => {
       const { id: userId } = checkIsUserLogged(context)
 
@@ -112,10 +98,8 @@ const resolvers = {
         userModel.addFav({ id: userId, photoId, })
       }
 
-      // get favs from user before exiting
-      const favs = tryGetFavsFromUserLogged(context)
       // get the updated photos model
-      const actualPhoto = photosModel.find({ id: photoId, favs })
+      const actualPhoto = photosModel.find({ id: photoId })
 
       return actualPhoto
     },
